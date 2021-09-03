@@ -1,5 +1,5 @@
 # bank-system
-Bank system that reads and writes to a text file where all customer information is stored. For each customer added, a separate text file is created where that customer's account and transaction information is stored. A user can: 
+Bank system that reads and writes to a text file (customers.txt) where all customer information is stored. For each customer added, a separate text file is created (in customerTransactions) where that customer's account and transaction information is stored. A user can: 
 
 1. Add/delete a customer.
 2. Sort customers by name or social insurance number.

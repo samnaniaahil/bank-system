@@ -11,7 +11,7 @@ import java.time.*;
 
 public class Bank {
 	public static void main(String[] args) {
-		int customerIndex = 0;
+		int customerIndex = 0, customerCount = 0;
 		int MAX_NUMBER_OF_CUSTOMERS = 50;
 		Customer[] customers = new Customer[MAX_NUMBER_OF_CUSTOMERS];
 		SavingAccount[] savingAccounts = new SavingAccount[MAX_NUMBER_OF_CUSTOMERS];
@@ -63,11 +63,15 @@ public class Bank {
 					chequingAccounts[customerIndex] = chequingAccount;
 					creditCards[customerIndex] = creditCard;
 					
+					customerCount++;
 					customerIndex++;
 				}
 			}
 			buffer.close();
-			customerIndex--;
+			if (customerIndex > 0) {
+				customerIndex--;
+			}
+			
 		}
 		
 		catch (IOException iox) { 
@@ -159,6 +163,7 @@ public class Bank {
 						
 						Customer c = new Customer(firstName, lastName, sin, birthYear, birthMonth, birthDay);
 						customerIndex++;
+						customerCount++;
 						
 						customers[customerIndex] = c;
 						chequingAccounts[customerIndex] = chequingAccount;
@@ -182,7 +187,7 @@ public class Bank {
 					}
 				}
 			}
-			if (userInput == 2 && customerIndex >= 0) {
+			if (userInput == 2 && customerCount > 0) {
 				System.out.println("Delete by name[1] or SIN[2]?");
 				int input = sc.nextInt();
 				if (input == 1) {
@@ -204,6 +209,7 @@ public class Bank {
 								creditCards[j] = creditCards[j+1];
 							}
 							customerIndex--;
+							customerCount--;
 							rewriteCustomerData(customers, savingAccounts, chequingAccounts, creditCards, 
 									customerIndex);
 							isFound = true;
@@ -232,6 +238,7 @@ public class Bank {
 								creditCards[j] = creditCards[j+1];
 							}							
 							customerIndex--;
+							customerCount--;
 							rewriteCustomerData(customers, savingAccounts, chequingAccounts, creditCards, 
 									customerIndex);
 							isFound = true;
@@ -246,7 +253,7 @@ public class Bank {
 				}
 			}
 			
-			if (userInput == 3 && customerIndex > 0) {
+			if (userInput == 3 && customerCount > 0) {
 				int x;
 				int y;
 				Customer temp;
@@ -284,7 +291,7 @@ public class Bank {
 				System.out.println("Customers sorted successfully!");
 			}
 			
-			if (userInput == 4 && customerIndex > 0) {
+			if (userInput == 4 && customerCount > 0) {
 				int a;
 				int b;
 				Customer temp;
@@ -320,7 +327,7 @@ public class Bank {
 				}
 			}
 
-			if (userInput == 6 && customerIndex > 0) {
+			if (userInput == 6 && customerCount > 0) {
 				System.out.println("Enter customer's last name:");
 				sc.nextLine();
 				String nameLast = sc.nextLine();
@@ -335,6 +342,7 @@ public class Bank {
 						Customer profile = customers[i];
 						System.out.println("\nWelcome " + profile.getFirstName() + " " + profile.getLastName() + "!");	
 						customerIndex = profileMenu(customers, savingAccounts, chequingAccounts, creditCards, profile, i, customerIndex);
+						customerCount = customerIndex + 1;
 						isFound = true;
 					}
 				}
@@ -343,7 +351,7 @@ public class Bank {
 				}
 				
 			}
-			if (userInput == 7 && customerIndex > 0) {
+			if (userInput == 7 && customerCount > 0) {
 				System.out.println("Please enter customer's SIN:");
 				sc.nextLine();
 				String sinIn = sc.nextLine();
@@ -393,6 +401,7 @@ public class Bank {
 		
 		while (!returnToMainMenu) {
 			Scanner sc = new Scanner(System.in);
+
 			System.out.println("\nPROFILE MENU");
 			System.out.println("-------------------");
 			System.out.println("\t1: View account activity");
@@ -717,6 +726,8 @@ public class Bank {
 			if (userInput == 10) {
 				returnToMainMenu = true;
 			}
+
+			sc.close();
 		}
 		return customerIndex;
 	}

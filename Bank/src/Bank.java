@@ -10,8 +10,9 @@ import java.time.*;
  */
 
 public class Bank {
+	static String inputFile;
 	public static void main(String[] args) {
-		int customerIndex = 0, customerCount = 0;
+		int customerIndex = -1, customerCount = 0;
 		int MAX_NUMBER_OF_CUSTOMERS = 50;
 		Customer[] customers = new Customer[MAX_NUMBER_OF_CUSTOMERS];
 		SavingAccount[] savingAccounts = new SavingAccount[MAX_NUMBER_OF_CUSTOMERS];
@@ -21,7 +22,7 @@ public class Bank {
 		Scanner sc = new Scanner(System.in);
 		
 		System.out.println("Enter name of file containing customer data: ");
-		String inputFile = sc.nextLine();
+		inputFile = sc.nextLine();
 			
 		try { 
 			String input="";
@@ -58,42 +59,42 @@ public class Bank {
 					SavingAccount savingAccount = new SavingAccount(savingBalance, 0);
 					ChequingAccount chequingAccount = new ChequingAccount(chequingBalance, 0);
 					CreditCard creditCard = new CreditCard(creditCardBalance, 0);
+
+					customerCount++;
+					customerIndex++;
+
 					customers[customerIndex] = c;
 					savingAccounts[customerIndex] = savingAccount;
 					chequingAccounts[customerIndex] = chequingAccount;
 					creditCards[customerIndex] = creditCard;
-					
-					customerCount++;
-					customerIndex++;
 				}
 			}
 			buffer.close();
-			if (customerIndex > 0) {
-				customerIndex--;
-			}
-			
 		}
 		
 		catch (IOException iox) { 
 			System.out.println("Problem reading " + inputFile); 
 		}
-	
-		for (int z = 0; z <= customerIndex; z++) {
-			String fileName = customers[z].getLastName() + customers[z].getSin() + ".txt";
-			try {
-				File myObj = new File(fileName);
-				if (myObj.createNewFile()) {
-			        System.out.println("File created: " + fileName);
-			    } 
-				else {
-			        System.out.println(fileName + " found");
-			    }
-			}
-			catch (IOException err) {
-				System.out.println("Error creating file.");
-			    err.printStackTrace();
+
+		if (customerCount > 0) {
+			for (int z = 0; z <= customerIndex; z++) {
+				String fileName = customers[z].getLastName() + customers[z].getSin() + ".txt";
+				try {
+					File myObj = new File("customerTransactions/" + fileName);
+					if (myObj.createNewFile()) {
+						System.out.println("File created: " + fileName);
+					} 
+					else {
+						System.out.println(fileName + " found");
+					}
+				}
+				catch (IOException err) {
+					System.out.println("Error creating file.");
+					err.printStackTrace();
+				}
 			}
 		}
+		
 		System.out.println("\nWelcome to the VP Bank.");
 		System.out.println("-------------------");
 		
@@ -132,14 +133,22 @@ public class Bank {
 					System.out.println("Select an account/card to open [Chequing Account(1)|Saving Account(2)|Credit Card(3)]:");
 					int account = sc.nextInt();
 					
-					LocalDate birth = LocalDate.of(birthYear, birthMonth, birthDay); 
-					LocalDate current = LocalDate.now(); 
-					Period diff = Period.between(birth, current);
+					LocalDate birth, current;
+					// Generate initial value for try-catch block scope
+					Period diff = Period.between(LocalDate.now(), LocalDate.now());
+					try {
+						birth = LocalDate.of(birthYear, birthMonth, birthDay); 
+						current = LocalDate.now(); 
+						diff = Period.between(birth, current);
+					}
+					catch (DateTimeException err) {
+						System.out.println("Invalid birth details.");
+						break;
+					}
 					
 					if ((diff.getYears() < 18) && (account == 1 || account == 3)) {
 						System.out.println("Sorry, you must be 18 to open this type of account.");
 					}
-					
 					else {
 						System.out.println("Opening balance for the account/card?");
 						double balance = sc.nextDouble();
@@ -321,9 +330,11 @@ public class Bank {
 			}
 			
 			if (userInput == 5) {
-				System.out.println("Total number of customers: " + (customerIndex+1));
-				for (int i = 0; i <= customerIndex; i++) {
-					System.out.println(customers[i].toString());
+				System.out.println("Total number of customers: " + (customerCount));
+				if (customerCount > 0) {
+					for (int i = 0; i <= customerIndex; i++) {
+						System.out.println(customers[i].toString());
+					}
 				}
 			}
 
@@ -427,7 +438,7 @@ public class Bank {
 					int maxTransactions = 5, maxLinesPerTransaction = 12;
 					String[][] transactionArr = new String[maxTransactions][maxLinesPerTransaction];
 					
-					file = new FileReader(fileName);
+					file = new FileReader("customerTransactions/" + fileName);
 					buffer = new BufferedReader(file);			
 					
 					System.out.println("Most recent transactions:");
@@ -726,8 +737,6 @@ public class Bank {
 			if (userInput == 10) {
 				returnToMainMenu = true;
 			}
-
-			sc.close();
 		}
 		return customerIndex;
 	}
@@ -748,7 +757,7 @@ public class Bank {
 			double firstBalance, double transaction, double secondBalance) {
 		String fileName = profile.getLastName() + profile.getSin() + ".txt";
 		try { 
-			FileWriter writer = new FileWriter(fileName, true);
+			FileWriter writer = new FileWriter("customerTransactions/" + fileName, true);
 			if (transactionDescription.equals("Pay credit card bill") || transactionDescription.equals("Fund Transfer") ||
 					 transactionDescription.equals("Profile Closure")) {
 				if (transactionType.equals("CtoCC")) {
@@ -843,7 +852,7 @@ public class Bank {
 		ChequingAccount chequingAccount = chequingAccounts[profileIndex];
 		CreditCard creditCard = creditCards[profileIndex];
 		
-		String fileName = "dataFile.txt";
+		String fileName = inputFile;
 		try { 
 			FileWriter writer = new FileWriter(fileName, true);
 			writer.write(profile.getLastName() + "\n");
@@ -856,19 +865,19 @@ public class Bank {
 				writer.write("none\n");
 			}
 			else {
-				writer.write(savingAccount.getBalance()+"\n");
+				writer.write(savingAccount.getBalance()+ "\n");
 			}
 			if (chequingAccount.getBalance() == -1) {
 				writer.write("none\n");
 			}
 			else {
-				writer.write(chequingAccount.getBalance()+"\n");
+				writer.write(chequingAccount.getBalance()+ "\n");
 			}
 			if (creditCard.getBalance() == 1) {
 				writer.write("none\n\n");
 			}
 			else {
-				writer.write(creditCard.getBalance()+"\n\n");
+				writer.write(creditCard.getBalance() + "\n\n");
 			}
 			writer.close();
 		}
@@ -887,7 +896,7 @@ public class Bank {
 	 */
 	public static void rewriteCustomerData(Customer customers[], SavingAccount savingAccounts[], 
 			ChequingAccount chequingAccounts[], CreditCard creditCards[], int customerIndex) {
-		String fileName = "dataFile.txt";
+		String fileName = inputFile;
 				
 		try {
 			FileWriter writer = new FileWriter(fileName, false);

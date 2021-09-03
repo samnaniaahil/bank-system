@@ -1,0 +1,7 @@
+Description: Open an account
+Account: Chequing Account
+Date: 2021-09-03
+Opening balance: 425.29
+Amount of Transaction: 0.0
+Ending Balance: 425.29
+

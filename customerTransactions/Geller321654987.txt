@@ -1,0 +1,26 @@
+Description: Open an account
+Account: Credit Card
+Date: 2021-09-03
+Opening balance: -342.0
+Amount of Transaction: 0.0
+Ending Balance: -342.0
+
+Description: Open an account
+Account: Chequing Account
+Date: 2021-09-03
+Opening balance: 1232.0
+Amount of Transaction: 0.0
+Ending Balance: 1232.0
+
+Description: Pay credit card bill
+From: Chequing Account
+To: Credit Card
+Amount paid: 212.0
+Date: 2021-09-03
+Account: Chequing
+Opening Balance: 1232.0
+Ending Balance: 1020.0
+Account: Credit Card
+Opening Balance: -342.0
+Ending Balance: -130.0
+

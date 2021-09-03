@@ -15,3 +15,9 @@ For each customer profile, a user can:
 5. Transfer funds between accounts.
 6. Open an account or issue a card.
 7. Cancel account/card.
+
+## Installation and Usage
+1. Clone repository.
+2. When prompted for customer data file, enter "customers.txt" or create an empty file in the same location as "customers.txt".
+
+Program is ready to use!
